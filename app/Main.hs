@@ -10,6 +10,9 @@ paddingLength = 4
 whiteBlock :: Int -> String
 whiteBlock n = "\ESC[107m" ++ replicate (n * paddingLength) ' ' ++ "\ESC[0m"
 
+wrapInWhiteBlocks :: String -> String
+wrapInWhiteBlocks s = whiteBlock 1 ++ s ++ whiteBlock 1
+
 colorMap :: Int -> String
 colorMap n = "\ESC[" ++ show (round (100.0 + logBase 2 (fromIntegral n))) ++ "m"
 
@@ -30,9 +33,9 @@ aux grid = do
   hSetEcho stdin False
   putStrLn "\ESC[2J"
   print (sum (map sum grid))
-  putStrLn (whiteBlock gridSize)
-  mapM_ (putStrLn . concatMap pprWrapped) grid
-  putStrLn (whiteBlock gridSize)
+  putStrLn (whiteBlock (gridSize + 2))
+  mapM_ (putStrLn . wrapInWhiteBlocks . concatMap pprWrapped) grid
+  putStrLn (whiteBlock (gridSize + 2))
 
   if noMovesPossible grid
     then return (sum (map sum grid))
